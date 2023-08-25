@@ -1,11 +1,11 @@
 const authorController = require('../controllers/authorController');
-
 const router = require('express').Router();
+const authorActionsRoutes = require('../routes/authorActionsRoutes');
 
-router.post('/', authorController.addAuthor);
+router.use('/actions', authorActionsRoutes);
+
 router.get('/', authorController.getAllAuthors);
 router.get('/:id', authorController.getAnAuthor);
-router.delete('/:id',authorController.deleteAuthors);
-router.put('/:id',authorController.updateAuthor);
+
 module.exports = router;
 

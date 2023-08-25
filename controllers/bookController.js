@@ -63,7 +63,58 @@ const bookController = {
             res.status(500).json(err);
         };
     },
-
+    borrowBook: async(req, res) => {
+        try{
+            const book = await Book.findById(req.params.id);
+            if(!book){
+                return res.status(404).json('Book Not Found');
+            }
+            if(book.isBorrowed){
+                res.status(400).json('Book is already borrowed');
+            }
+            book.isBorrowed = true;
+            await book.save();
+            res.status(200).json('Book Borrowed Successfully');
+        }catch(err){
+            res.status(500).json(err)
+        }
+    },
+    returnBook: async(req, res) => {
+        try{
+            const book = await Book.findById(req.params.id);
+            if(!book){
+                return res.status(404).json('Book Not Found');
+            }
+            if(!book.isBorrowed){
+                return res.status(400).json('Book is not currently borrowed');
+            }
+            book.isBorrowed = false;
+            await book.save();
+            res.status(200).json('Book Returned Successfully');
+        }catch(err){
+            res.status(500).json(err);
+        };
+    },
+    searchBookByGenre: async(req, res) => {
+        try{
+            const genre = req.query.genreName;
+            const Books = await Book.find({genres: genre})
+            .populate('genres', 'name')
+            .select('name');
+            res.status(200).json(Books);
+        }catch(err){
+            res.status(500).json(err);
+        }
+    },
+    searchBookByAuthor: async(req,res) =>{
+        try{
+            const author = req.query.authorName;
+            const Author = await Author.find({Author: author})
+            .select('title');
+        }catch(err){
+            res.status(500).json(err);
+        }
+    }
 };
 
 module.exports = bookController;

@@ -9,7 +9,7 @@ const authorSchema = new mongoose.Schema({
     },
     year:
     {
-        type: Number,
+        type: String,
         required: true
     },
     books:[
@@ -39,6 +39,11 @@ const bookSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Author"
     },    
+    isBorrowed:
+    {
+        type: Boolean,
+        default: false,
+    },
 });
 
 let Book = mongoose.model("Book", bookSchema);

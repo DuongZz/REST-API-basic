@@ -26,8 +26,9 @@ try{
     handleError(err);
 };
 
-app.use('/v1/author', authorRoute);
-app.use('/v1/book', bookRoute)
+app.use('/author', authorRoute);
+app.use('/book', bookRoute)
+
 
 
 app.listen(8080, () => {
