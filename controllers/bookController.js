@@ -1,7 +1,7 @@
 const {Book, Author} = require('../model/model');
 
 const bookController = {
-    addBook : async(req, res) => {
+    addBook : async (req, res) => {
         try{
             const newBook = new Book(req.body);
             const saveBook = await newBook.save();
@@ -14,15 +14,27 @@ const bookController = {
             res.status(500).json(err);
         };
     },
-    getAllBook: async(req, res) => {
+    getAllBook: async (req, res) => {
         try{
-            const books = await Book.find();
-            res.status(200).json(books)
+            const page = req.query.page ? parseInt(req.query.page) : 1;
+            const perPage = 3;
+            const totalBooks = await Book.countDocuments();
+            const totalPages = Math.ceil(totalBooks / perPage);
+
+            const books = await Book.find()
+            .skip((page - 1) * perPage)
+            .limit(perPage);
+
+            res.status(200).json({
+                books: books,
+                currentPage: page,
+                totalPages: totalPages
+            });
         }catch(err){
-            res.status(500).json(err);
-        };
+            res.status(500).json(err)
+        }
     },
-    deleteBook: async(req, res) => {
+    deleteBook: async (req, res) => {
         try{
             const deleteBook = await Book.findById();
             if(!deleteBook){
@@ -42,7 +54,7 @@ const bookController = {
             res.status(500).json(err);
         }
     },
-    updateBook: async(req, res) => {
+    updateBook: async (req, res) => {
         try{
             const book = await Book.findById(req.params.id);
             await book.updateOne({ $set : req.body });
@@ -51,7 +63,7 @@ const bookController = {
             res.status(500).json(err)
         };
     },
-    deleteBooks: async(req, res) => {
+    deleteBooks: async (req, res) => {
         try{
             await Author.updateMany(
                 { books: req.params.id },
@@ -63,7 +75,7 @@ const bookController = {
             res.status(500).json(err);
         };
     },
-    borrowBook: async(req, res) => {
+    borrowBook: async (req, res) => {
         try{
             const book = await Book.findById(req.params.id);
             if(!book){
@@ -79,7 +91,7 @@ const bookController = {
             res.status(500).json(err)
         }
     },
-    returnBook: async(req, res) => {
+    returnBook: async (req, res) => {
         try{
             const book = await Book.findById(req.params.id);
             if(!book){
@@ -95,7 +107,7 @@ const bookController = {
             res.status(500).json(err);
         };
     },
-    searchBookByGenre: async(req, res) => {
+    searchBookByGenre: async (req, res) => {
         try{
             const genre = req.query.genreName;
             const Books = await Book.find({genres: genre})
@@ -106,11 +118,24 @@ const bookController = {
             res.status(500).json(err);
         }
     },
-    searchBookByAuthor: async(req,res) =>{
+    searchBookByAuthor: async (req,res) =>{
         try{
             const author = req.query.authorName;
             const Author = await Author.find({Author: author})
             .select('title');
+        }catch(err){
+            res.status(500).json(err);
+        }
+    },
+    searchBookByPageNum: async (req, res) => {
+        try{
+            const minPageNum = parseInt(req.query.minPageNum) || 0;
+            const maxPageNum = parseInt(req.query.maxPageNum) || Infinity;
+
+            const books = await Book.find({
+                pageNum: {$gte: minPageNum, $lte: maxPageNum}
+            });
+            res.status(200).json(books);
         }catch(err){
             res.status(500).json(err);
         }

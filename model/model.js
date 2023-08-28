@@ -44,6 +44,11 @@ const bookSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    pageNum:
+    {
+        type: Number,
+        required: true
+    },
 });
 
 let Book = mongoose.model("Book", bookSchema);

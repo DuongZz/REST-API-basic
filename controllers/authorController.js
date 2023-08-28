@@ -1,7 +1,7 @@
 const {Book, Author} = require('../model/model');
 
 const authorController = {
-    addAuthor : async(req, res) => {
+    addAuthor : async (req, res) => {
         try{
             const newAuthor = new Author(req.body);
             const saveAuthor = await newAuthor.save();
@@ -10,7 +10,7 @@ const authorController = {
             res.status(500).json(err);
         };
     },
-    getAllAuthors: async(req, res) => {
+    getAllAuthors: async (req, res) => {
         try{
             const authors = await Author.find();
             res.status(200).json(authors);
@@ -19,7 +19,7 @@ const authorController = {
         }
     },
     
-    getAnAuthor: async(req, res) => {
+    getAnAuthor: async (req, res) => {
         try{
             const author = await Author.findById(req.params.id).populate("books");
             res.status(200).json(author);
@@ -28,7 +28,7 @@ const authorController = {
         };
     },
 
-    deleteAuthors: async(req, res) => {
+    deleteAuthors: async (req, res) => {
         try{
             const authorID = req.params.id;
             const deleteAuthor = await Author.findByIdAndDelete(authorID)
@@ -40,7 +40,7 @@ const authorController = {
             res.status(500).json(err);
         }
     },
-    updateAuthor: async(req, res) => {
+    updateAuthor: async (req, res) => {
         try{
             const author = await Author.findById(req.params.id);
             await author.updateOne({ $set : req.body });
