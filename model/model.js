@@ -49,6 +49,10 @@ const bookSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    isFavourite:
+    {
+        type: Boolean
+    },
 });
 
 let Book = mongoose.model("Book", bookSchema);

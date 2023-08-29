@@ -139,6 +139,23 @@ const bookController = {
         }catch(err){
             res.status(500).json(err);
         }
+    },
+    searchFavouriteBook: async(req, res) => {
+        try{
+            const bookID = req.params.id;
+            const book = await Book.findById(bookID);
+            if(!book){
+                res.status(403).json('Book Not Found');
+            }
+            book.isFavourite = !book.isFavourite;
+            await book.save();
+            res.status(200).json({
+                message: 'Favourite status toggled',
+                isFavourite: book.isFavourite
+            });
+            }catch(err){
+                res.status(500).json(err);
+            }
     }
 };
 
